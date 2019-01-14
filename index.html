@@ -1,0 +1,434 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Offices</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.min.css">
+</head>
+<body>
+<div class="wrapper" id="app">
+    <header class="header">
+        <div class="header-left">
+            <a href="/" class="header-logo">
+                <img src="/img/logo.png" alt="Logo">
+            </a>
+            <a href="#" class="header-profile">
+                Profile Editor
+            </a>
+        </div>
+        <nav class="header-nav" v-show="menuOpened">
+            <ul class="header-menu">
+                <li class="header-menu-item">
+                    <a href="#" class="header-menu-item-link">Contact</a>
+                </li>
+                <li class="header-menu-item">
+                    <a href="#" class="header-menu-item-link">FAQs</a>
+                </li>
+                <li class="header-menu-item">
+                    <a href="#" class="header-menu-item-link">Save and Exit</a>
+                </li>
+            </ul>
+        </nav>
+        <button class="header-menu-button" v-if="window.innerWidth<768" v-on:click="menuOpened=!menuOpened">
+            <span class="header-menu-button-line"></span>
+            <span class="header-menu-button-line"></span>
+            <span class="header-menu-button-line"></span>
+        </button>
+    </header>
+    <div class="page">
+        <div class="page-sidebar">
+            <div class="page-sidebar-progress">
+                <img src="/img/progress.svg" alt="progress bar">
+            </div>
+            <ul class="page-sidebar-accordion">
+                <li class="page-sidebar-accordion-item">
+                    <h3 class="page-sidebar-accordion-item-name">Company info</h3>
+                    <ul class="page-sidebar-accordion-list active">
+                        <li class="page-sidebar-accordion-list-item completed">
+                            <a href="#">Basic Info</a>
+                        </li>
+                        <li class="page-sidebar-accordion-list-item current">
+                            <a href="#">Offices</a>
+                        </li>
+                        <li class="page-sidebar-accordion-list-item unfilled">
+                            <a href="#">Competitors</a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="page-sidebar-accordion-item">
+                    <h3 class="page-sidebar-accordion-item-name">My firm</h3>
+                    <ul class="page-sidebar-accordion-list">
+                        <li class="page-sidebar-accordion-list-item"><a href="#">Item 1</a></li>
+                        <li class="page-sidebar-accordion-list-item"><a href="#">Item 2</a></li>
+                        <li class="page-sidebar-accordion-list-item"><a href="#">Item 3</a></li>
+                    </ul>
+                </li>
+                <li class="page-sidebar-accordion-item">
+                    <h3 class="page-sidebar-accordion-item-name">Deals</h3>
+                    <ul class="page-sidebar-accordion-list">
+                        <li class="page-sidebar-accordion-list-item"><a href="#">Item 1</a></li>
+                        <li class="page-sidebar-accordion-list-item"><a href="#">Item 2</a></li>
+                        <li class="page-sidebar-accordion-list-item"><a href="#">Item 3</a></li>
+                    </ul>
+                </li>
+                <li class="page-sidebar-accordion-item">
+                    <h3 class="page-sidebar-accordion-item-name">Financials</h3>
+                    <ul class="page-sidebar-accordion-list">
+                        <li class="page-sidebar-accordion-list-item"><a href="#">Item 1</a></li>
+                        <li class="page-sidebar-accordion-list-item"><a href="#">Item 2</a></li>
+                        <li class="page-sidebar-accordion-list-item"><a href="#">Item 3</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="page-content">
+            <div class="page-content-info">
+                <h2 class="page-content-info-title">Offices <span class="page-content-info-title_part">| company info</span></h2>
+                <p class="page-content-info-subtitle">Updating your location and contact information helps you appeal to regional investors and service providers.</p>
+            </div>
+            <div id="offices" class="page-content-offices">
+                <div class="page-content-offices-top">
+                    <button class="button button_big" v-on:click="addingOffice = !addingOffice">Add new Office</button>
+                    <div class="page-content-offices-ammount">{{ offices.length }} Offices</div>
+                </div>
+
+                <div class="page-content-offices-list">
+
+                    <form class="page-content-offices-list-add" v-on:submit.prevent="addOffice" v-show="addingOffice">
+                        <div class="page-content-offices-list-add-items">
+                            <label class="page-content-offices-list-add-item">
+                                <span class="page-content-offices-list-add-item-name">
+                                    *Country:
+                                </span>
+                                <span class="page-content-offices-list-add-item-control has-dropdown">
+                                    <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: newOffice.country}" type="text" v-model="newOffice.country" required>
+                                    <ul class="page-content-offices-list-add-item-input-autocomplete" v-show="newOffice.country.length >= 1 && availableCountries.indexOf( newOffice.country ) === -1">
+                                        <li class="page-content-offices-list-add-item-input-autocomplete-item" v-for="country in availableCountries" v-if="country.toLowerCase().indexOf(newOffice.country.toLowerCase()) > -1" v-on:click="newOffice.country = country">
+                                            {{ country }}
+                                        </li>
+                                        <li class="page-content-offices-list-add-item-input-autocomplete-item" v-if="availableCountries.toString().toLowerCase().indexOf( newOffice.country.toLowerCase() ) === -1">
+                                            Enter another country
+                                        </li>
+                                    </ul>
+                                </span>
+                            </label>
+
+                            <label class="page-content-offices-list-add-item">
+                                <span class="page-content-offices-list-add-item-name">
+                                    *State/Province:
+                                </span>
+                                <span class="page-content-offices-list-add-item-control has-dropdown">
+                                    <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: newOffice.state}" type="text" v-model="newOffice.state" required>
+                                     <ul class="page-content-offices-list-add-item-input-autocomplete" v-show="newOffice.state.length >= 1 && availableStates.indexOf( newOffice.state ) === -1">
+                                        <li class="page-content-offices-list-add-item-input-autocomplete-item" v-for="state in availableStates" v-if="state.toLowerCase().indexOf(newOffice.state.toLowerCase()) > -1" v-on:click="newOffice.state = state">
+                                            {{ state }}
+                                        </li>
+                                        <li class="page-content-offices-list-add-item-input-autocomplete-item" v-if="availableStates.toString().toLowerCase().indexOf( newOffice.state.toLowerCase() ) === -1">
+                                            Enter another state
+                                        </li>
+                                    </ul>
+                                </span>
+                            </label>
+
+                            <label class="page-content-offices-list-add-item">
+                                <span class="page-content-offices-list-add-item-name">
+                                    *Postal Code:
+                                </span>
+                                <span class="page-content-offices-list-add-item-control">
+                                    <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: newOffice.postalCode}" type="text" v-model="newOffice.postalCode" required>
+                                </span>
+                            </label>
+
+                            <label class="page-content-offices-list-add-item">
+                                <span class="page-content-offices-list-add-item-name">
+                                    *City:
+                                </span>
+                                <span class="page-content-offices-list-add-item-control has-dropdown">
+                                    <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: newOffice.city}" type="text" v-model="newOffice.city" required>
+                                    <ul class="page-content-offices-list-add-item-input-autocomplete" v-show="newOffice.city.length >= 1 && availableCities.indexOf( newOffice.city ) === -1">
+                                        <li class="page-content-offices-list-add-item-input-autocomplete-item" v-for="city in availableCities" v-if="city.toLowerCase().indexOf(newOffice.city.toLowerCase()) > -1" v-on:click="newOffice.city = city">
+                                            {{ city }}
+                                        </li>
+                                        <li class="page-content-offices-list-add-item-input-autocomplete-item" v-if="availableCities.toString().toLowerCase().indexOf( newOffice.city.toLowerCase() ) === -1">
+                                            Enter another state
+                                        </li>
+                                    </ul>
+                                </span>
+                            </label>
+
+                            <label class="page-content-offices-list-add-item">
+                                <span class="page-content-offices-list-add-item-name">
+                                    *Street Address:
+                                </span>
+                                <span class="page-content-offices-list-add-item-control">
+                                    <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: newOffice.street}" type="text" v-model="newOffice.street" required>
+                                </span>
+                            </label>
+
+                            <label class="page-content-offices-list-add-item">
+                                <span class="page-content-offices-list-add-item-name">
+                                    Address 2:
+                                </span>
+                                <span class="page-content-offices-list-add-item-control">
+                                    <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: newOffice.addressSecond}" type="text" v-model="newOffice.addressSecond">
+                                </span>
+                            </label>
+
+                            <label class="page-content-offices-list-add-item">
+                                <span class="page-content-offices-list-add-item-name">
+                                    Phone:
+                                </span>
+                                <span class="page-content-offices-list-add-item-control">
+                                    <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: newOffice.phone}" type="tel" v-model="newOffice.phone" v-mask="telMask(newOffice.country)">
+                                </span>
+                            </label>
+
+                            <label class="page-content-offices-list-add-item">
+                                <span class="page-content-offices-list-add-item-name">
+                                    Fax:
+                                </span>
+                                <span class="page-content-offices-list-add-item-control">
+                                    <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: newOffice.fax}" type="tel" v-model="newOffice.fax" v-mask="telMask(newOffice.country)">
+                                </span>
+                            </label>
+
+                            <label class="page-content-offices-list-add-item">
+                                <span class="page-content-offices-list-add-item-name">
+                                    Email:
+                                </span>
+                                <span class="page-content-offices-list-add-item-control">
+                                    <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: newOffice.email}" type="email" v-model="newOffice.email">
+                                </span>
+                            </label>
+
+                            <label class="page-content-offices-list-add-item">
+                                <span class="page-content-offices-list-add-item-name">
+                                    Office Type:
+                                </span>
+                                <span class="page-content-offices-list-add-item-control">
+                                    <input class="page-content-offices-list-add-item-input page-content-offices-list-add-item-input_checkbox" type="checkbox" v-model="newOffice.officeType">
+                                    <span class="page-content-offices-list-add-item-input_checkbox-custom"></span>
+                                    Primary HQ
+                                </span>
+                            </label>
+                        </div>
+                        <div class="page-content-offices-list-add-controls">
+                            <button class="button button_white" type="reset" v-on:click="addOfficeCancel">Cancel</button>
+                            <button class="button button_primary-light button_save" type="submit">Save</button>
+                        </div>
+                    </form>
+
+                    <div class="page-content-offices-list-empty" v-if="offices.length === 0"> Here is no offices</div>
+
+                    <div class="page-content-offices-list-item"  v-for="office in offices" :key="office['.key']">
+                        <div class="page-content-offices-list-item-wrap" v-if="!office.editable">
+                            <div class="page-content-offices-list-item-info">
+
+                                <div class="page-content-offices-list-item-info-part">
+                                    <div class="page-content-offices-list-item-info-part-name">
+                                        Address:
+                                    </div>
+                                    <div class="page-content-offices-list-item-info-part-value">
+                                        <span><b v-if="office.officeType"><i class="fa fa-check"></i> {{ office.officeType ? 'Primary HQ' : '' }}</b></span>
+                                        <span v-if="office.addressSecond">{{ office.addressSecond }}</span>
+                                        <span>{{ office.street }}</span>
+                                        <span>{{ office.city }} {{ office.state }} {{ office.postalCode }}</span>
+                                        <span>{{ office.country }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="page-content-offices-list-item-info-part" v-if="office.phone.length>1">
+                                    <div class="page-content-offices-list-item-info-part-name">
+                                        Phone:
+                                    </div>
+                                    <div class="page-content-offices-list-item-info-part-value">
+                                        {{ office.phone }}
+                                    </div>
+                                </div>
+
+                                <div class="page-content-offices-list-item-info-part" v-if="office.fax.length>1">
+                                    <div class="page-content-offices-list-item-info-part-name">
+                                        Fax:
+                                    </div>
+                                    <div class="page-content-offices-list-item-info-part-value">
+                                        {{ office.fax }}
+                                    </div>
+                                </div>
+
+                                <div class="page-content-offices-list-item-info-part" v-if="office.email">
+                                    <div class="page-content-offices-list-item-info-part-name">
+                                        Email:
+                                    </div>
+                                    <div class="page-content-offices-list-item-info-part-value">
+                                        {{ office.email }}
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="page-content-offices-list-item-controls">
+                                <button class="button button_secondary" v-on:click="modalOpen(office)">Remove</button>
+                                <button class="button button_primary-light button_save" v-on:click="editOffice(office)">Edit</button>
+                            </div>
+                        </div>
+
+                        <div class="page-content-offices-list-item-form" v-if="office.editable">
+
+                            <form class="page-content-offices-list-add page-content-offices-list-add_edit-form" v-on:submit.prevent="updateOffice(office)">
+                                <div class="page-content-offices-list-add-items">
+                                    <label class="page-content-offices-list-add-item">
+                                        <span class="page-content-offices-list-add-item-name">
+                                            *Country:
+                                        </span>
+                                        <span class="page-content-offices-list-add-item-control has-dropdown">
+                                            <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: office.country}" type="text" v-model="office.country" required>
+                                            <ul class="page-content-offices-list-add-item-input-autocomplete" v-show="office.country.length >= 1 && availableCountries.indexOf( office.country ) === -1">
+                                                <li class="page-content-offices-list-add-item-input-autocomplete-item" v-for="country in availableCountries" v-if="country.toLowerCase().indexOf(office.country.toLowerCase()) > -1" v-on:click="office.country = country">
+                                                    {{ country }}
+                                                </li>
+                                                <li class="page-content-offices-list-add-item-input-autocomplete-item" v-if="availableCountries.toString().toLowerCase().indexOf( office.country.toLowerCase() ) === -1">
+                                                    Enter another country
+                                                </li>
+                                            </ul>
+                                        </span>
+                                    </label>
+
+                                    <label class="page-content-offices-list-add-item">
+                                        <span class="page-content-offices-list-add-item-name">
+                                            *State/Province:
+                                        </span>
+                                        <span class="page-content-offices-list-add-item-control has-dropdown">
+                                            <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: office.state}" type="text" v-model="office.state" required>
+                                             <ul class="page-content-offices-list-add-item-input-autocomplete" v-show="office.state.length >= 1 && availableStates.indexOf( office.state ) === -1">
+                                                <li class="page-content-offices-list-add-item-input-autocomplete-item" v-for="state in availableStates" v-if="state.toLowerCase().indexOf(office.state.toLowerCase()) > -1" v-on:click="office.state = state">
+                                                    {{ state }}
+                                                </li>
+                                                <li class="page-content-offices-list-add-item-input-autocomplete-item" v-if="availableStates.toString().toLowerCase().indexOf( office.state.toLowerCase() ) === -1">
+                                                    Enter another state
+                                                </li>
+                                            </ul>
+                                        </span>
+                                    </label>
+
+                                    <label class="page-content-offices-list-add-item">
+                                        <span class="page-content-offices-list-add-item-name">
+                                            *Postal Code:
+                                        </span>
+                                        <span class="page-content-offices-list-add-item-control">
+                                            <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: office.postalCode}" type="text" v-model="office.postalCode" required>
+                                        </span>
+                                    </label>
+
+                                    <label class="page-content-offices-list-add-item">
+                                        <span class="page-content-offices-list-add-item-name">
+                                            *City:
+                                        </span>
+                                        <span class="page-content-offices-list-add-item-control has-dropdown">
+                                            <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: office.city}" type="text" v-model="office.city" required>
+                                            <ul class="page-content-offices-list-add-item-input-autocomplete" v-show="office.city.length >= 1 && availableCities.indexOf( office.city ) === -1">
+                                                <li class="page-content-offices-list-add-item-input-autocomplete-item" v-for="city in availableCities" v-if="city.toLowerCase().indexOf(office.city.toLowerCase()) > -1" v-on:click="office.city = city">
+                                                    {{ city }}
+                                                </li>
+                                                <li class="page-content-offices-list-add-item-input-autocomplete-item" v-if="availableCities.toString().toLowerCase().indexOf( office.city.toLowerCase() ) === -1">
+                                                    Enter another state
+                                                </li>
+                                            </ul>
+                                        </span>
+                                    </label>
+
+                                    <label class="page-content-offices-list-add-item">
+                                        <span class="page-content-offices-list-add-item-name">
+                                            *Street Address:
+                                        </span>
+                                        <span class="page-content-offices-list-add-item-control">
+                                            <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: office.street}" type="text" v-model="office.street" required>
+                                        </span>
+                                    </label>
+
+                                    <label class="page-content-offices-list-add-item">
+                                        <span class="page-content-offices-list-add-item-name">
+                                            Address 2:
+                                        </span>
+                                        <span class="page-content-offices-list-add-item-control">
+                                            <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: office.addressSecond}" type="text" v-model="office.addressSecond">
+                                        </span>
+                                    </label>
+
+                                    <label class="page-content-offices-list-add-item">
+                                        <span class="page-content-offices-list-add-item-name">
+                                            Phone:
+                                        </span>
+                                        <span class="page-content-offices-list-add-item-control">
+                                            <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: office.phone}" type="tel" v-model="office.phone" v-mask="telMask(office.country)">
+                                        </span>
+                                    </label>
+
+                                    <label class="page-content-offices-list-add-item">
+                                        <span class="page-content-offices-list-add-item-name">
+                                            Fax:
+                                        </span>
+                                        <span class="page-content-offices-list-add-item-control">
+                                            <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: office.fax}" type="tel" v-model="office.fax" v-mask="telMask(office.country)">
+                                        </span>
+                                    </label>
+
+                                    <label class="page-content-offices-list-add-item">
+                                        <span class="page-content-offices-list-add-item-name">
+                                            Email:
+                                        </span>
+                                        <span class="page-content-offices-list-add-item-control">
+                                            <input class="page-content-offices-list-add-item-input" v-bind:class="{filled: office.email}" type="email" v-model="office.email">
+                                        </span>
+                                    </label>
+
+                                    <label class="page-content-offices-list-add-item">
+                                        <span class="page-content-offices-list-add-item-name">
+                                            Office Type:
+                                        </span>
+                                        <span class="page-content-offices-list-add-item-control">
+                                            <input class="page-content-offices-list-add-item-input page-content-offices-list-add-item-input_checkbox" type="checkbox" v-model="office.officeType">
+                                            <span class="page-content-offices-list-add-item-input_checkbox-custom"></span>
+                                            Primary HQ
+                                        </span>
+                                    </label>
+                                </div>
+                                <div class="page-content-offices-list-add-controls">
+                                    <button class="button button_white" type="reset" v-on:click="editOfficeCancel(office)">Cancel</button>
+                                    <button class="button button_primary-light button_save" type="submit">Save</button>
+                                </div>
+                            </form>
+                            
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal" v-if="modalOpened">
+                    <div class="modal-content">
+                        <h3 class="modal-heading">Are you sure to delete this office?</h3>
+                        <div class="modal-controls">
+                            <button class="button" v-on:click="removeOffice(confirmOffice)">YES</button>
+                            <button class="button" v-on:click="modalClose()">NO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="page-content-navigation">
+                <button class="button button_big page-content-navigation-back">Back</button>
+                <a class="page-content-navigation-comment" href="#"><i class="fa fa-plus-circle"></i>Provide additional comments</a>
+                <button class="button button_big page-content-navigation-skip">Skip this step</button>
+                <button class="button button_big button_primary-light page-content-navigation-continue">Continue</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
+<script src="//www.gstatic.com/firebasejs/5.5.7/firebase.js"></script>
+<script src="//unpkg.com/vuefire/dist/vuefire.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/v-mask/1.3.3/v-mask.min.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>

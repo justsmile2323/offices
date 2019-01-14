@@ -1,0 +1,61 @@
+.header{
+  height: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  background: $primary-color;
+  color: $white-color;
+  padding: 0 25px;
+  margin-bottom: 25px;
+  @media(max-width: 767px){
+    margin-bottom: 15px;
+  }
+  &-nav{
+    @media(max-width: 767px){
+      position: absolute;
+      top: 64px;
+      left: 0;
+      background: $primary-color;
+      width: 100%;
+      padding: 10px;
+    }
+  }
+  &-left{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  &-logo{
+    margin-right: 30px;
+  }
+  &-menu{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    &-item{
+      margin-left: 40px;
+      @media(max-width: 767px){
+        margin-left: 0;
+      }
+    }
+    &-button{
+      width: 30px;
+      height: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid $white-color;
+      border-radius: 2px;
+      &-line{
+        width: 20px;
+        height: 2px;
+        background: $white-color;
+        &:nth-child(2){
+          margin: 4px 0;
+        }
+      }
+    }
+  }
+}
